@@ -1,5 +1,5 @@
 /*
-		headtrack - Webcam Head Tracking Datagram Server
+		headtrack - Webcam Head Tracking Datagram Server V0.0.0
 
 		Copyright 2010 Ralph Glass
 
