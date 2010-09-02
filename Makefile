@@ -7,6 +7,7 @@ headtrack32: headtrack.c
 	gcc -std=c99 -Wno-unused-parameter -Wno-unused-value -Wno-unused-function -W -Wall -O2 -I/usr/include/X11 `pkg-config --cflags --libs opencv x11` -m32 -o headtrack32 headtrack.c
 
 deb: headtrack
+	mkdir -p ./debian/usr/bin 
 	cp headtrack ./debian/usr/bin/headtrack
 	dpkg --build debian
 	mv debian.deb headtrack.deb
