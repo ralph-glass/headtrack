@@ -1,0 +1,27 @@
+headtrack
+
+Head Tracking with a Webcam
+
+Introduction:
+The program headtrack shows a video stream from your webcam 
+in a window and draws a box around the detected head. Then
+the head position in front of the screen is estimated. The
+view direction is deduced assuming that the viewer is looking
+at the screen. A datagram server provides head position and 
+view direction. This data can be used by external applications
+to control the user view.
+
+Prerequisites:
+You need OpenCV (tested with versions 2.0 and 2.1) installed.
+
+Installation:
+Please read the INSTALL file.
+
+Where to get if from:
+www.headtracking.blogspot.com
+
+headtrack is free software and licensed under the GNU General 
+Public License, Version 3 or later.
+
+Contact:
+Ralph Glass, Erpelweg 2, 86356 Neusaess, ralph.glass@t-online.de 

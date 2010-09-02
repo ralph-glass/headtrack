@@ -1,0 +1,13 @@
+Package: headtrack
+Version: 0.0.0
+Section: base
+Priority: optional
+Architecture: amd64
+Depends: libcv4, libhighgui4, libcvaux4
+Installed-Size: 16 
+Maintainer: Ralph Glass <ralph.glass@t-online.de>
+Provides: headtrack
+Description: Webcam Head Tracking 
+  .
+  headtrack shows a capture stream from a webcam and draws 
+  a box around a found head.

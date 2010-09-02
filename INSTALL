@@ -1,0 +1,23 @@
+Installation Instructions:
+
+headtrack
+
+Head Tracking with a Webcam
+
+The program headtrack shows a video stream from your webcam 
+in a window and draws a box around the detected head. Then
+the head position in front of the screen is estimated. The
+view direction is deduced assuming that the viewer is looking
+at the screen. A datagram server provides head position and 
+view direction. This data can be used by external applications
+to control the user view.
+
+You need OpenCV (tested with versions 2.0 and 2.1) installed.
+
+1. Type 'make install' to compile the program headtrack and 
+   install it to /usr/bin/headtrack
+
+2. Type 'headtrack' to run the program
+
+
+(or use 'make installdeb' to create and install deb package)
