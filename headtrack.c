@@ -58,6 +58,17 @@
 #define SIZEY 480
 #define ROTATION_STEP 25
 
+int vflag = 0;
+int sflag = 0;
+int hflag = 0;
+
+void printusage ()
+{
+  printf("headtrack [-v] [-h]\n");
+  printf("headtrack -v\t#verbose\n");
+  printf("headtrack -h\t#this help\n");
+}
+
 /* Send Variables */
 int sendvalx=0; 
 int sendvaly=0;
@@ -65,8 +76,30 @@ int sendvalz=0;
 float sendyaw=0;
 float sendpitch=0;
 	
-int main()
+int main(int argc, char **argv)
 { 
+  int index;
+  int c;
+  opterr = 0;
+  while ((c = getopt(argc, argv, "vshw")) != -1)
+  switch (c)
+    {
+    case 'v':
+      vflag = 1;
+      break;
+    case 'h':
+      printusage();
+      return 0;
+      break;
+    case '?':
+      printusage();
+      return 1;
+    default:
+      abort();
+    }
+  /* printf ("vflag = %d, hflag = %d\n", vflag, hflag); */
+  for (index = optind; index < argc; index++)
+    printf ("Non-option argument %s\n", argv[index]);
   pthread_t thread; 
 	char *t_argument = NULL;
 	int new_thread;
@@ -206,7 +239,7 @@ int main()
 							cv2DRotationMatrix(centre ,-ROTATION_STEP, 1.0, translate_right);
 						}
 
-					if (VERBOSE == 1)
+					if (VERBOSE + vflag == 1)
 						{
 						  cvRectangle( imggray, cvPoint(face_rect.x,
 	  																				face_rect.y),
@@ -285,7 +318,7 @@ int main()
 					sendyaw = (atan (realx / realz)) * 180 / 3.141; 
 					sendpitch = (atan ((realy + 40) / 500)) * 180 / 3.141; 
 
-					if (VERBOSE == 1) 
+					if (VERBOSE + vflag == 1) 
 						{
 							printf("      x:%4d y:%4d z:%4d xd:%+6.6f yd:%+6.6f\n",
                       	    xval, yval, zval, sendyaw,  sendpitch);
@@ -387,7 +420,7 @@ void *datagram_server (void *ptr)
      sprintf(sendbuffer,"%4d%4d%4d%+6.4f",sendvalx,sendvaly,sendvalz,sendyaw);
      sprintf(sendbuffer + 4 + 4 + 4 + 7,"%+6.4f\n",sendpitch);
 
-     if (VERBOSE == 1)
+     if (VERBOSE + vflag == 1)
        {
           printf("\n%s\n",sendbuffer);
        }    
