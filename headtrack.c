@@ -35,7 +35,8 @@
 #include <gtk/gtk.h>
 #include <sched.h>
 
-#define FACEALT "/usr/share/opencv/haarcascades/haarcascade_frontalface_alt.xml"
+#define FACEALT_OLD "/usr/share/opencv/haarcascades/haarcascade_frontalface_alt.xml"
+#define FACEALT "/usr/share/doc/opencv-doc/examples/haarcascades/haarcascades/haarcascade_frontalface_alt.xml.gz"
 #define CANNY CV_HAAR_DO_CANNY_PRUNING
 #define BIGGEST CV_HAAR_FIND_BIGGEST_OBJECT
 #define SCALE_IMAGE CV_HAAR_SCALE_IMAGE
@@ -55,7 +56,7 @@
 #define DATA_OUTPUT_ENABLED true
 #define SIZEX 640
 #define SIZEY 480
-#define ROTATION_STEP 30
+#define ROTATION_STEP 25
 
 /* Send Variables */
 int sendvalx=0; 
