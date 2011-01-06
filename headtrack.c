@@ -79,7 +79,6 @@ struct input_event event;
 
 int setup_uinput_device()
 {
-  int i=0;
   uinput_fd = open("/dev/uinput", O_WRONLY | O_NDELAY);
   if (uinput_fd < 0)
     {
@@ -96,16 +95,7 @@ int setup_uinput_device()
   ioctl(uinput_fd, UI_SET_EVBIT, EV_REL);
   ioctl(uinput_fd, UI_SET_RELBIT, REL_X);
   ioctl(uinput_fd, UI_SET_RELBIT, REL_Y);
-  for (i=0; i < 256; i++) ioctl(uinput_fd, UI_SET_KEYBIT, i);
   ioctl(uinput_fd, UI_SET_KEYBIT, BTN_MOUSE);
-  /*ioctl(uinput_fd, UI_SET_KEYBIT, BTN_TOUCH);
-  ioctl(uinput_fd, UI_SET_KEYBIT, BTN_MOUSE);
-  ioctl(uinput_fd, UI_SET_KEYBIT, BTN_LEFT);
-  ioctl(uinput_fd, UI_SET_KEYBIT, BTN_MIDDLE);
-  ioctl(uinput_fd, UI_SET_KEYBIT, BTN_RIGHT);
-  ioctl(uinput_fd, UI_SET_KEYBIT, BTN_FORWARD);
-  ioctl(uinput_fd, UI_SET_KEYBIT, BTN_BACK);
-  */
 
   /* Create input device into input sub-system */
   write(uinput_fd, &device, sizeof(device));
