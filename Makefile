@@ -28,4 +28,4 @@ clean:
 	rm -f ./debian/usr/bin/headtrack
 
 run: 
-	./headtrack
+	sudo ./headtrack

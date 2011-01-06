@@ -27,6 +27,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/un.h>
+#include <sys/stat.h>
 #include <unistd.h>
 #include <netdb.h>
 #include <pthread.h>
@@ -34,6 +35,9 @@
 #include <highgui.h>
 #include <gtk/gtk.h>
 #include <sched.h>
+#include <fcntl.h>
+#include <linux/input.h>
+#include <linux/uinput.h>
 
 #define FACEALT_OLD "/usr/share/opencv/haarcascades/haarcascade_frontalface_alt.xml"
 #define FACEALT "/usr/share/doc/opencv-doc/examples/haarcascades/haarcascades/haarcascade_frontalface_alt.xml.gz"
@@ -69,6 +73,50 @@ void printusage ()
   printf("headtrack -h\t#this help\n");
 }
 
+static int uinput_fd = -1;
+struct uinput_user_dev device;
+struct input_event event;
+
+int setup_uinput_device()
+{
+  int i=0;
+  uinput_fd = open("/dev/uinput", O_WRONLY | O_NDELAY);
+  if (uinput_fd < 0)
+    {
+       printf("Unable to open /dev/uinput\n");
+       return -1;
+    }
+  memset(&device,0,sizeof(device)); // Intialize the uInput device to NULL
+  strncpy(device.name, "headtrack device", UINPUT_MAX_NAME_SIZE);
+  device.id.version = 4;
+  device.id.bustype = BUS_USB;
+
+  // Setup the uinput virtual mouse device
+  ioctl(uinput_fd, UI_SET_EVBIT, EV_KEY);
+  ioctl(uinput_fd, UI_SET_EVBIT, EV_REL);
+  ioctl(uinput_fd, UI_SET_RELBIT, REL_X);
+  ioctl(uinput_fd, UI_SET_RELBIT, REL_Y);
+  for (i=0; i < 256; i++) ioctl(uinput_fd, UI_SET_KEYBIT, i);
+  ioctl(uinput_fd, UI_SET_KEYBIT, BTN_MOUSE);
+  /*ioctl(uinput_fd, UI_SET_KEYBIT, BTN_TOUCH);
+  ioctl(uinput_fd, UI_SET_KEYBIT, BTN_MOUSE);
+  ioctl(uinput_fd, UI_SET_KEYBIT, BTN_LEFT);
+  ioctl(uinput_fd, UI_SET_KEYBIT, BTN_MIDDLE);
+  ioctl(uinput_fd, UI_SET_KEYBIT, BTN_RIGHT);
+  ioctl(uinput_fd, UI_SET_KEYBIT, BTN_FORWARD);
+  ioctl(uinput_fd, UI_SET_KEYBIT, BTN_BACK);
+  */
+
+  /* Create input device into input sub-system */
+  write(uinput_fd, &device, sizeof(device));
+  if (ioctl(uinput_fd, UI_DEV_CREATE))
+    {
+      printf("Unable to create UINPUT device.");
+      return -1;
+    }
+  return 1;
+}
+
 /* Send Variables */
 int sendvalx=0; 
 int sendvaly=0;
@@ -78,6 +126,14 @@ float sendpitch=0;
 	
 int main(int argc, char **argv)
 { 
+  bool virtualmouse = false;
+
+  if (setup_uinput_device() < 0) // setup needs file access or root
+    {
+       printf("uinput device not found\n");
+       return -1;
+    }
+  
   int index;
   int c;
   opterr = 0;
@@ -362,6 +418,36 @@ int main(int argc, char **argv)
 					break;
 					done = 1;
 			  }
+
+			if (c == 109) // m KEY
+        {
+					virtualmouse = !virtualmouse;
+			  }
+
+      if (virtualmouse == true)
+			  {
+           int mx = 0;
+           int my = 0;
+					 if (abs(xval) > 20) mx = xval / 5; // sensitivity 
+           if (abs(yval) > 20) my = yval / 5;
+
+           memset(&event, 0, sizeof(event));
+					 gettimeofday(&event.time, NULL);
+					 event.type = EV_REL;
+					 event.code = REL_X;
+					 event.value = mx;
+					 write(uinput_fd, &event, sizeof(event));
+					 event.type = EV_REL;
+					 event.code = REL_Y;
+					 event.value = my;
+					 write(uinput_fd, &event, sizeof(event));
+					 event.type = EV_SYN;
+					 event.code = SYN_REPORT;
+					 event.value = 0;
+					 write(uinput_fd, &event, sizeof(event));
+
+        }
+
     }
 
   // Clean Up
