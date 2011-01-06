@@ -127,11 +127,14 @@ int main(int argc, char **argv)
   int index;
   int c;
   opterr = 0;
-  while ((c = getopt(argc, argv, "vshw")) != -1)
+  while ((c = getopt(argc, argv, "vhm")) != -1)
   switch (c)
     {
     case 'v':
       vflag = 1;
+      break;
+    case 'm':
+      virtualmouse = true;
       break;
     case 'h':
       printusage();
